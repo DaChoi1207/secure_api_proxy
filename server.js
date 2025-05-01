@@ -13,7 +13,12 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+const FRONTEND_URL = process.env.FRONTEND_URL;  
+app.use(cors({
+  origin: FRONTEND_URL,                   // e.g. https://your-vercel-app.vercel.app
+  methods: ['GET','POST','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
 
 // Health check
 app.get('/', (req, res) => {
