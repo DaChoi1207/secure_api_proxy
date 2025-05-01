@@ -1,6 +1,6 @@
 // proxy/groq.js
+
 const pool = require('../db/pg');
-const fetch = require('node-fetch'); // if your Node version doesn’t expose global fetch
 
 module.exports = async function proxyToGroq(req, res) {
   const { prompt } = req.body;
@@ -10,7 +10,7 @@ module.exports = async function proxyToGroq(req, res) {
 
   let statusCode = 500;
   try {
-    // 1) Forward to Groq
+    // 1) Forward the request to Groq
     const groqRes = await fetch(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -25,10 +25,11 @@ module.exports = async function proxyToGroq(req, res) {
         }),
       }
     );
+
     statusCode = groqRes.status;
     const data = await groqRes.json();
 
-    // 2) Insert the audit log
+    // 2) Audit-log insert
     try {
       await pool.query(
         `INSERT INTO request_logs(user_id, endpoint, status_code)
@@ -39,7 +40,7 @@ module.exports = async function proxyToGroq(req, res) {
       console.error('Log insert error:', dbErr);
     }
 
-    // 3) Return the Groq response (or error code)
+    // 3) Relay the Groq response (or error)
     if (!groqRes.ok) {
       return res.status(502).json({ error: 'Groq API error', details: data });
     }
@@ -48,7 +49,7 @@ module.exports = async function proxyToGroq(req, res) {
   } catch (err) {
     console.error('Proxy exception:', err);
 
-    // 4) On unexpected errors, log a 500
+    // 4) Log unexpected failures as 500
     try {
       await pool.query(
         `INSERT INTO request_logs(user_id, endpoint, status_code)
