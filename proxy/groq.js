@@ -32,8 +32,8 @@ module.exports = async function proxyToGroq(req, res) {
     // 2) Audit-log insert
     try {
       await pool.query(
-        `INSERT INTO request_logs(user_id, endpoint, status_code)
-         VALUES($1, $2, $3)`,
+        `INSERT INTO request_logs(user_id, endpoint, status_code, created_at)
+         VALUES($1, $2, $3, NOW())`,
         [req.user.userId, '/api/groq', statusCode]
       );
     } catch (dbErr) {
@@ -52,8 +52,8 @@ module.exports = async function proxyToGroq(req, res) {
     // 4) Log unexpected failures as 500
     try {
       await pool.query(
-        `INSERT INTO request_logs(user_id, endpoint, status_code)
-         VALUES($1, $2, $3)`,
+        `INSERT INTO request_logs(user_id, endpoint, status_code, created_at)
+         VALUES($1, $2, $3, NOW())`,
         [req.user.userId, '/api/groq', 500]
       );
     } catch (dbErr2) {
