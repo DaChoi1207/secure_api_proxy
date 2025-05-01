@@ -9,17 +9,16 @@ const proxyToGroq = require('./proxy/groq');
 
 const app = express();
 
-// 1) JSON body parsing
-app.use(express.json());
-
-// 2) CORS: allow only your Vercel origin, handle preflight automatically
-const corsOptions = {
-  origin:  process.env.FRONTEND_URL,    // e.g. "https://your-vercel-app.vercel.app"
+// 1) CORS: allow any origin, handle preflight automatically
+app.use(cors({
+  origin: true,               // reflect request Origin header back
   methods: ['GET','POST','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization'],
   optionsSuccessStatus: 200            // some clients need 200 rather than 204
-};
-app.use(cors(corsOptions));
+}));
+
+// 2) JSON body parsing
+app.use(express.json());
 
 // 3) Health check
 app.get('/', (req, res) => {
