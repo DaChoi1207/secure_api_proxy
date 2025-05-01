@@ -13,7 +13,7 @@ export default function AdminDashboard() {
   const handleLogin = async () => {
     setError(null);
     try {
-      const res = await fetch('/auth/login', {
+      const res = await fetch(`${API}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -68,7 +68,7 @@ export default function AdminDashboard() {
           onChange={e => setUsername(e.target.value)}
           placeholder="Username"
         />
-        <input
+        <input  
           type="password"
           style={{ width: '100%', marginBottom: 18, padding: 8, border: '1px solid #ccc', borderRadius: 5, fontSize: 15 }}
           value={password}
@@ -89,6 +89,9 @@ export default function AdminDashboard() {
   return (
     <div className="p-4 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Admin Log Dashboard</h1>
+      <p style={{ fontSize: 12, color: '#666' }}>
+        Debug API Base: <code>{API || '(undefined)'}</code>
+      </p>
       <button
         onClick={fetchLogs}
         className="bg-green-600 text-white py-2 px-4 rounded mb-4"
