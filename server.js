@@ -1,24 +1,25 @@
-// server.js
 require('dotenv').config();
-
 const express = require('express');
-const cors = require('cors');
-const pool = require('./db/pg');
-const jwt = require('jsonwebtoken');
-const auth = require('./middleware/auth');
+const cors    = require('cors');
+const pool    = require('./db/pg');
+const jwt     = require('jsonwebtoken');
+const auth    = require('./middleware/auth');
 const rateLimit = require('./middleware/rateLimit');
 const proxyToGroq = require('./proxy/groq');
 
 const app = express();
 
-// Middleware
+// Parse JSON first
 app.use(express.json());
-const FRONTEND_URL = process.env.FRONTEND_URL;  
-app.use(cors({
-  origin: FRONTEND_URL,                   // e.g. https://your-vercel-app.vercel.app
-  methods: ['GET','POST','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
-}));
+
+// CORS: only allow your Vercel origin
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // no trailing slash!
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Health check
 app.get('/', (req, res) => {
