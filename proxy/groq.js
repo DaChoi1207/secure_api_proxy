@@ -5,6 +5,12 @@ const pool = require('../db/pg');
 module.exports = async function proxyToGroq(req, res) {
   const { prompt } = req.body;
   if (!prompt) {
+    // log the 400
+    await pool.query(
+      `INSERT INTO request_logs(user_id,endpoint,status_code,created_at)
+       VALUES($1,$2,$3,NOW())`,
+      [req.user.userId, '/api/groq', 400]
+    ).catch(()=>{});
     return res.status(400).json({ error: 'Missing `prompt` in request body' });
   }
 
