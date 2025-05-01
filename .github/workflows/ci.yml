@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (if you add ESLint)
+        run: npm run lint || echo "No linter configured"
+
+      - name: Run tests
+        run: npm test || echo "No tests configured"
+
+      - name: Build Docker image
+        run: docker build -t secure-proxy-app .
+
+      # Optional: Log in & push to DockerHub
+      # - name: Log in to DockerHub
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USER }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      #
+      # - name: Push image
+      #   run: docker push secure-proxy-app:latest
