@@ -9,6 +9,10 @@ const proxyToGroq = require('./proxy/groq');
 
 const app = express();
 
+// Trust the first proxy (Railway, Vercel, etc.)
+app.set('trust proxy', 1);
+
+
 // 1) CORS: allow any origin, handle preflight automatically
 app.use(cors({
   origin: true,               // reflect request Origin header back
