@@ -7,6 +7,7 @@ export default function AdminDashboard() {
   const [token, setToken] = useState('');
   const [logs, setLogs] = useState(null);
   const [error, setError] = useState(null);
+  const API = process.env.REACT_APP_API_BASE_URL;
 
   // 1️⃣ Log in to get a JWT
   const handleLogin = async () => {
@@ -33,7 +34,7 @@ export default function AdminDashboard() {
   const fetchLogs = async () => {
     setError(null);
     try {
-      const res = await fetch('/api/logs', {
+      const res = await fetch(`${API}/api/logs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) {
