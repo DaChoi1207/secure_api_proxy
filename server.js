@@ -25,6 +25,17 @@ app.get('/', (req, res) => {
   res.send('Secure API Proxy Agent is running ✅');
 });
 
+// Database health check
+app.get('/health/db', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT NOW() as now');
+    res.json({ now: rows[0].now });
+  } catch (err) {
+    console.error('DB health-check error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 4) Protected test route
 app.get('/protected', auth, (req, res) => {
   res.json({ message: '✅ Authenticated!', user: req.user });
