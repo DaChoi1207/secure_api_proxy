@@ -4,14 +4,16 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db/pg');
-
+const jwt = require('jsonwebtoken');
 const auth = require('./middleware/auth');
 const rateLimit = require('./middleware/rateLimit');
 const proxyToGroq = require('./proxy/groq');
 
 const app = express();
-app.use(cors());
+
+// Middleware
 app.use(express.json());
+app.use(cors());
 
 // Health check
 app.get('/', (req, res) => {
@@ -23,6 +25,21 @@ app.get('/protected', auth, (req, res) => {
   res.json({ message: '✅ Authenticated!', user: req.user });
 });
 
+// Auth endpoint
+app.post('/auth/login', (req, res) => {
+  const { username, password } = req.body;
+  // ★ Replace this with real user checks, or leave it simple for demo
+  if (username === 'admin' && password === 'password') {
+    const token = jwt.sign(
+      { userId: username },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    return res.json({ token });
+  }
+  res.status(401).json({ error: 'Invalid credentials' });
+});
+
 // Mount all /api routes behind auth + rate limit
 app.use('/api', auth, rateLimit);
 
@@ -31,7 +48,7 @@ app.use('/api', auth, rateLimit);
 app.post('/api/groq', proxyToGroq);
 
 // GET /api/logs — return the 50 most recent requests
-app.get('/api/logs', auth, async (req, res) => {
+app.get('/api/logs', async (req, res) => {
   // If running under Jest, just return an empty array
   if (process.env.NODE_ENV === 'test') {
     return res.json([]);
