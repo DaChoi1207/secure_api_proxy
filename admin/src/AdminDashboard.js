@@ -51,9 +51,6 @@ export default function AdminDashboard() {
     return (
       <div style={{ padding: 32, maxWidth: 400, margin: '60px auto', border: '1px solid #eee', borderRadius: 12, background: '#fafbfc', boxShadow: '0 2px 8px #eee' }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 10, color: '#222' }}>Admin Login</h1>
-        <p className="mb-2 text-sm text-gray-600" style={{ margin: 0, marginBottom: 8, fontSize: 13, color: '#666' }}>
-          API Base URL: <code>{process.env.REACT_APP_API_BASE_URL || '(undefined)'}</code>
-        </p>
         <p style={{ color: '#666', marginBottom: 20, fontSize: 15 }}>
           <strong>Note:</strong> This project serves mainly for demoing a secure API proxy and admin audit log UI.<br/>
           <span style={{ fontSize: 13, color: '#888' }}>
@@ -89,9 +86,6 @@ export default function AdminDashboard() {
   return (
     <div className="p-4 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Admin Log Dashboard</h1>
-      <p style={{ fontSize: 12, color: '#666' }}>
-        Debug API Base: <code>{API || '(undefined)'}</code>
-      </p>
       <button
         onClick={fetchLogs}
         className="bg-green-600 text-white py-2 px-4 rounded mb-4"
